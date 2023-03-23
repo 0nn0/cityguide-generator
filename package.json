@@ -13,6 +13,7 @@
     "format:check": "prettier --check \"**/*.{ts,tsx,mdx}\" --cache"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.0.0",
     "@next/font": "^13.1.6",
     "@radix-ui/react-accessible-icon": "^1.0.1",
     "@radix-ui/react-accordion": "^1.1.0",
@@ -50,9 +51,11 @@
     "next-themes": "^0.2.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-hook-form": "^7.43.7",
     "sharp": "^0.31.3",
     "tailwind-merge": "^1.8.0",
-    "tailwindcss-animate": "^1.0.5"
+    "tailwindcss-animate": "^1.0.5",
+    "zod": "^3.21.4"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^3.7.1",

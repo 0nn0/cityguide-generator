@@ -12,17 +12,17 @@ interface SiteConfig {
 }
 
 export const siteConfig: SiteConfig = {
-  name: "Next.js",
+  name: "City Guide Generator",
   description:
     "Beautifully designed components built with Radix UI and Tailwind CSS.",
   mainNav: [
-    {
-      title: "Home",
-      href: "/",
-    },
+    // {
+    //   title: "Home",
+    //   href: "/",
+    // },
   ],
   links: {
-    twitter: "https://twitter.com/shadcn",
+    twitter: "https://twitter.com/0nn0",
     github: "https://github.com/shadcn/ui",
     docs: "https://ui.shadcn.com",
   },

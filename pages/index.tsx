@@ -1,13 +1,14 @@
 import Head from "next/head"
-import Link from "next/link"
+import { useRouter } from "next/router"
+import { useLocalStorage } from "usehooks-ts"
 
-import { siteConfig } from "@/config/site"
-import { cn } from "@/lib/utils"
 import GeneratorForm from "@/components/generator-form"
 import { Layout } from "@/components/layout"
-import { buttonVariants } from "@/components/ui/button"
 
 export default function IndexPage() {
+  const router = useRouter()
+  const [storedValue, setValue] = useLocalStorage("recommendations", null)
+
   return (
     <Layout>
       <Head>
@@ -19,9 +20,22 @@ export default function IndexPage() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <section className="container grid items-center gap-6 pt-6 pb-8 md:py-10">
-        <GeneratorForm />
-      </section>
+      <main>
+        <section className="container grid items-center gap-6 py-12 lg:py-20 md:py-10">
+          <h1 className="text-2xl lg:text-3xl lg:pb-6 font-semibold">
+            Generate your city guide
+          </h1>
+          <GeneratorForm
+            onSubmitSuccess={(city, recommendations) => {
+              setValue({
+                city,
+                recommendations,
+              })
+              router.push("/result")
+            }}
+          />
+        </section>
+      </main>
     </Layout>
   )
 }

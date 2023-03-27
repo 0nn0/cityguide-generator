@@ -7,14 +7,14 @@ export function SiteFooter() {
         <div className="flex flex-col items-center space-y-4 dark:border-b-slate-700">
           <div className="">
             <p className="text-sm">
-              Little experiment built by{" "}
+              By{" "}
               <Link
                 href="https://www.onnoschwanen.com"
                 className="text-sm font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-100 sm:text-sm"
               >
                 0nn0
               </Link>{" "}
-              with{" "}
+              and built with{" "}
               <Link
                 href="https://nextjs.org"
                 className="text-sm font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-100 sm:text-sm"
@@ -33,7 +33,7 @@ export function SiteFooter() {
                 href="https://openai.com"
                 className="text-sm font-semibold text-slate-600 hover:text-slate-900 dark:text-slate-100 sm:text-sm"
               >
-                ChatGPT
+                OpenAI
               </Link>{" "}
             </p>
           </div>

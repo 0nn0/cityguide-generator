@@ -10,59 +10,77 @@ import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Textarea } from "./ui/textarea"
 
-const tags = [
-  "Sightseeing",
-  "Art & Culture",
-  "Shopping",
-  "Food & Drink",
-  "Nightlife",
-  "Outdoor Activities",
-  "Sports & Recreation",
-  "Family-friendly",
-  "Relaxation & Wellness",
-  "Tours & Experiences",
-  "Festivals & Events",
-  "Budget-friendly",
-  "Luxury",
-  "Architecture",
-  "History",
+const interests = [
+  "Museums",
+  "Galeries",
+  "Music Venues",
+  "Theater",
+  "Markets",
+  "Boutiques",
+  "Local Cuisine",
+  "Fine Dining",
+  "Street Food",
+  "Cafes",
+  "Bars & Pubs",
+  "Breweries & Distilleries",
+  "Clubs",
   "Off the beaten path",
 ] as const
 
 const schema = z.object({
   city: z.string().nonempty("City is required"),
-  otherSpecifications: z.string().optional(),
-  tags: z.array(z.string()).min(2, "Select at least 2 interests"),
+  interests: z.array(z.string()).min(2, "Select at least 2 interests"),
+  otherInterests: z.string().optional(),
 })
 
-export default function GeneratorForm() {
+export default function GeneratorForm({
+  onSubmitSuccess,
+}: {
+  onSubmitSuccess: (city: string, data: any) => void
+}) {
   type SchemaType = z.infer<typeof schema>
 
   const {
     control,
     register,
     handleSubmit,
+    setError,
     getValues,
     formState: { errors, isSubmitting },
   } = useForm<SchemaType>({
     resolver: zodResolver(schema),
     defaultValues: {
-      tags: [],
+      interests: [],
     },
   })
 
-  const onSubmit = (data) => {
-    const otherSpecifications = data.otherSpecifications
-      ? ` Also, consider these additional specifications: ${data.otherSpecifications}.`
-      : ""
+  const onSubmit = async (data) => {
+    try {
+      const response = await fetch("/api/generator", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          city: data.city,
+          interests: data.interests,
+          otherInterests: data.otherInterests,
+        }),
+      })
 
-    const prompt = `Generate a personalized city guide for ${
-      data.city
-    } focusing on the following interests: ${data.tags.join(
-      ", "
-    )}. ${otherSpecifications}`
+      if (response.ok) {
+        const json = await response.json()
+        onSubmitSuccess(data.city, json.data)
+        return
+      }
 
-    console.log("Generated prompt:", prompt)
+      setError("root.serverError", {
+        type: response.status.toString(),
+        message: response.statusText,
+      })
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   return (
@@ -74,6 +92,7 @@ export default function GeneratorForm() {
           type="text"
           id="city"
           name="city"
+          maxLength={30}
         />
         {errors.city && (
           <p className="text-red-500 text-sm">{errors.city.message}</p>
@@ -83,22 +102,22 @@ export default function GeneratorForm() {
         <Label>Select your interests:</Label>
         <div>
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-4 pb-3">
-            {tags.map((tag) => (
-              <div key={tag} className="items-top flex space-x-2">
+            {interests.map((interest) => (
+              <div key={interest} className="items-top flex space-x-2">
                 <Controller
-                  name="tags"
+                  name="interests"
                   control={control}
                   render={({ field }) => {
                     return (
                       <Checkbox
-                        id={`tags.${tag}`}
-                        name="tags"
+                        id={`interests.${interest}`}
+                        name="interests"
                         onCheckedChange={(value) => {
-                          const values = getValues("tags")
-                          if (value && !values.includes(tag)) {
-                            field.onChange([...values, tag])
+                          const values = getValues("interests")
+                          if (value && !values.includes(interest)) {
+                            field.onChange([...values, interest])
                           } else {
-                            field.onChange(values.filter((t) => t !== tag))
+                            field.onChange(values.filter((t) => t !== interest))
                           }
                         }}
                       />
@@ -106,35 +125,42 @@ export default function GeneratorForm() {
                   }}
                 />
                 <label
-                  htmlFor={`tags.${tag}`}
+                  htmlFor={`interests.${interest}`}
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  {tag}
+                  {interest}
                 </label>
               </div>
             ))}
           </div>
-          {errors && errors.tags && (
-            <p className="text-red-500 text-sm">{errors.tags.message}</p>
+          {errors && errors.interests && (
+            <p className="text-red-500 text-sm">{errors.interests.message}</p>
           )}
         </div>
       </div>
       <div className="grid w-full items-center gap-1.5 mb-10">
-        <Label htmlFor="otherSpecifications">Any other specifications:</Label>
+        <Label htmlFor="otherInterests">Any other interests:</Label>
         <Textarea
-          {...register("otherSpecifications")}
-          id="otherSpecifications"
-          name="otherSpecifications"
+          {...register("otherInterests")}
+          id="otherInterests"
+          name="otherInterests"
           rows={4}
-          maxLength={200}
+          maxLength={100}
         />
       </div>
+      {errors.root?.serverError && (
+        <div className="mb-6">
+          <p className="text-red-500 text-sm">
+            Error: {errors.root.serverError.message}
+          </p>
+        </div>
+      )}
       <Button
         type="submit"
         disabled={isSubmitting}
         className="flex w-full md:inline-flex md:w-auto"
       >
-        {/* <Loader2 className="mr-2 h-4 w-4 animate-spin" /> */}
+        {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
         Generate
       </Button>
     </form>

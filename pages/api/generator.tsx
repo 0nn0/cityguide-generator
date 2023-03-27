@@ -4,6 +4,10 @@ import { z } from "zod"
 
 import { siteConfig } from "@/config/site"
 
+export const config = {
+  runtime: "edge",
+}
+
 const schema = z.object({
   city: z.string().nonempty(),
   interests: z.array(z.string()).min(2),

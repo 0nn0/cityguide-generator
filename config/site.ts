@@ -9,6 +9,7 @@ interface SiteConfig {
     github: string
     docs: string
   }
+  resultCount: number
 }
 
 export const siteConfig: SiteConfig = {
@@ -26,4 +27,6 @@ export const siteConfig: SiteConfig = {
     github: "https://github.com/shadcn/ui",
     docs: "https://ui.shadcn.com",
   },
+
+  resultCount: 5,
 }

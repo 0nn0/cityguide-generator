@@ -2,6 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next"
 import { Configuration, OpenAIApi } from "openai"
 import { z } from "zod"
 
+import { siteConfig } from "@/config/site"
+
 const schema = z.object({
   city: z.string().nonempty(),
   interests: z.array(z.string()).min(2),
@@ -33,7 +35,8 @@ export default async function handler(
       const prompt = generatePrompt(
         data.city,
         data.interests,
-        data.otherInterests
+        data.otherInterests,
+        siteConfig.resultCount
       )
 
       const completion = await openai.createCompletion({
@@ -71,9 +74,14 @@ export default async function handler(
   })
 }
 
-function generatePrompt(city, interests = [], otherInterests = "") {
+function generatePrompt(
+  city,
+  interests = [],
+  otherInterests = "",
+  resultCount
+) {
   return `
-    Create a city guide and recommend me the 5 best places I should in the city of ${city} based on my interests: ${interests.join(
+    Create a city guide and recommend me the ${resultCount} best places I should in the city of ${city} based on my interests: ${interests.join(
     ", "
   )}. ${
     otherInterests.length

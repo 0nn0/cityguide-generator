@@ -161,7 +161,7 @@ export default function GeneratorForm({
         className="flex w-full md:inline-flex md:w-auto"
       >
         {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        Generate
+        {isSubmitting ? "Generating..." : "Generate"}
       </Button>
     </form>
   )

@@ -22,7 +22,8 @@ export default async function handler(
 
     const openai = new OpenAIApi(
       new Configuration({
-        apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
+        apiKey: process.env.OPENAI_API_KEY,
+        // organization: "org-r0by3fP10ytHp51QC9FvaTph",
       })
     )
 

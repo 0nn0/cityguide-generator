@@ -22,9 +22,9 @@ export default function Guide({ city, recommendations = [] }) {
       </ul>
 
       <div className="mt-8 border border-gray-200 rounded-lg p-4">
-        <p className="italic text-md">
-          Limiting results to {siteConfig.resultCount} recommendations... to
-          keep API usage to minimum as it is just an experiment.
+        <p className="italic">
+          Limiting results to {siteConfig.resultCount} recommendations in order
+          to keep API usage as well as the loading time to minimum.
         </p>
       </div>
     </div>

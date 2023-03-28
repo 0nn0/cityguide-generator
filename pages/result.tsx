@@ -34,10 +34,10 @@ export default function Result() {
   return (
     <Layout>
       <Head>
-        <title>Your City Guide</title>
+        <title>City Guide Generator</title>
         <meta
           name="description"
-          content="Next.js template for building apps with Radix UI and Tailwind CSS"
+          content="Discover the best hotspots with our city guide generator. It creates a unique itinerary based on your interests and preferences. From hidden gems to popular attractions, explore the city like a local."
         />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />

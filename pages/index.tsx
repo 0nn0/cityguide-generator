@@ -12,7 +12,7 @@ export default function IndexPage() {
   return (
     <Layout>
       <Head>
-        <title>Next.js</title>
+        <title>City Guide Generator</title>
         <meta
           name="description"
           content="Next.js template for building apps with Radix UI and Tailwind CSS"
@@ -21,8 +21,8 @@ export default function IndexPage() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <section className="container grid items-center gap-6 py-12 lg:py-20 md:py-10">
-          <h1 className="text-2xl lg:text-3xl lg:pb-6 font-semibold">
+        <section className="container grid items-center gap-6 py-12 md:py-10">
+          <h1 className="text-2xl lg:text-3xl lg:pb-4 font-semibold">
             Generate your city guide
           </h1>
           <GeneratorForm

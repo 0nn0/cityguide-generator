@@ -1,5 +1,3 @@
-import type { NextApiRequest, NextApiResponse } from "next"
-import { Configuration, OpenAIApi } from "openai"
 import { z } from "zod"
 
 import { siteConfig } from "@/config/site"
@@ -14,67 +12,63 @@ const schema = z.object({
   otherInterests: z.string().optional(),
 })
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse
-) {
-  if (req.method === "POST") {
-    const response = schema.safeParse(req.body)
-
-    if (!response.success)
-      return res.status(400).json({
-        error: "Invalid request body",
-      })
-
-    const openai = new OpenAIApi(
-      new Configuration({
-        apiKey: process.env.OPENAI_API_KEY,
-        // organization: "org-r0by3fP10ytHp51QC9FvaTph",
-      })
-    )
-
-    const data = response.data
-
-    try {
-      const prompt = generatePrompt(
-        data.city,
-        data.interests,
-        data.otherInterests,
-        siteConfig.resultCount
-      )
-
-      const completion = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt,
-        temperature: 0.9,
-        max_tokens: 1500,
-        stream: false,
-      })
-
-      if (completion.data.choices[0].finish_reason === "stop") {
-        const parsed = parseCityGuide(completion.data.choices[0].text)
-
-        return res.status(200).json({
-          data: parsed,
-        })
-      }
-    } catch (error) {
-      if (error.response) {
-        return res.status(error.response.status).json(error.response.data)
-      } else {
-        return res.status(500).json({
-          error: {
-            message: "An error occurred during your request.",
-          },
-        })
-      }
-    }
-
-    return res.status(204).json({})
+export default async function handler(req: Request): Promise<Response> {
+  if (req.method !== "POST") {
+    return new Response(JSON.stringify({ error: "Invalid request method" }), {
+      status: 405,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
   }
 
-  return res.status(405).json({
-    error: "Method not allowed",
+  const body = (await req.json()) as {
+    city: string
+    interests: string[]
+    otherInterests: string[]
+  }
+
+  const response = schema.safeParse(body)
+
+  if (!response.success)
+    return new Response(JSON.stringify({ error: "Invalid request body" }), {
+      status: 400,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+
+  const payload = {
+    model: "text-davinci-003",
+    prompt: generatePrompt(
+      response.data.city,
+      response.data.interests,
+      response.data.otherInterests,
+      siteConfig.resultCount
+    ),
+    temperature: 0.9,
+    max_tokens: 1500,
+    stream: false,
+  }
+
+  const res = await fetch("https://api.openai.com/v1/completions", {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
+    },
+    method: "POST",
+    body: JSON.stringify(payload),
+  })
+
+  const data = await res.json()
+  const parsed = parseCityGuide(data.choices[0].text)
+  console.log({ parsed })
+
+  return new Response(JSON.stringify(parsed), {
+    status: 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
   })
 }
 
@@ -85,7 +79,7 @@ function generatePrompt(
   resultCount
 ) {
   return `
-    Create a city guide and recommend me the ${resultCount} best places I should in the city of ${city} based on my interests: ${interests.join(
+    Create a personal city guide and recommend the ${resultCount} best places to visit in the city of ${city} based on your friend interests: ${interests.join(
     ", "
   )}. ${
     otherInterests.length
@@ -97,6 +91,7 @@ The answer should match the following:
 - Be valid JSON
 - Not contain any line-breaks or enters
 - Not contain an intro or ending, only the JSON data
+- Limit amount of recommended places to ${resultCount}
 - Be an array of places, where each place is represented as an object with the following key values: 
     - title: the title of the place
     - description: reason why one should visit the place in one sentence

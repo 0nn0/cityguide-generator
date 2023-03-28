@@ -1,4 +1,3 @@
-import React from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Loader2 } from "lucide-react"
 import { Controller, useForm } from "react-hook-form"
@@ -33,13 +32,13 @@ const schema = z.object({
   otherInterests: z.string().optional(),
 })
 
+type SchemaType = z.infer<typeof schema>
+
 export default function GeneratorForm({
   onSubmitSuccess,
 }: {
   onSubmitSuccess: (city: string, data: any) => void
 }) {
-  type SchemaType = z.infer<typeof schema>
-
   const {
     control,
     register,
@@ -54,7 +53,7 @@ export default function GeneratorForm({
     },
   })
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (formData) => {
     try {
       const response = await fetch("/api/generator", {
         method: "POST",
@@ -62,22 +61,23 @@ export default function GeneratorForm({
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          city: data.city,
-          interests: data.interests,
-          otherInterests: data.otherInterests,
+          city: formData.city,
+          interests: formData.interests,
+          otherInterests: formData.otherInterests,
         }),
       })
 
-      if (response.ok) {
-        const json = await response.json()
-        onSubmitSuccess(data.city, json.data)
+      if (!response.ok) {
+        setError("root.serverError", {
+          type: response.status.toString(),
+          message: response.statusText,
+        })
         return
       }
 
-      setError("root.serverError", {
-        type: response.status.toString(),
-        message: response.statusText,
-      })
+      const body = await response.json()
+
+      onSubmitSuccess(formData.city, body)
     } catch (e) {
       console.error(e)
     }

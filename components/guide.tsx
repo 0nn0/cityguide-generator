@@ -5,7 +5,9 @@ import { siteConfig } from "@/config/site"
 export default function Guide({ city, recommendations = [] }) {
   return (
     <div>
-      <h1 className="text-xl font-semibold mb-8">{city} City Guide</h1>
+      <h1 className="text-2xl lg:text-3xl lg:pb-8 font-semibold">
+        {city} City Guide
+      </h1>
 
       <ul className="list-decimal list-inside lg:list-outside">
         {recommendations.map((item, index) => (

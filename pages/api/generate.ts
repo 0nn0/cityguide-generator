@@ -28,6 +28,8 @@ export default async function handler(req: Request): Promise<Response> {
     otherInterests: string[]
   }
 
+  console.log({ body })
+
   const response = schema.safeParse(body)
 
   if (!response.success)
@@ -61,6 +63,9 @@ export default async function handler(req: Request): Promise<Response> {
   })
 
   const data = await res.json()
+
+  console.log({ data })
+
   const parsed = parseCityGuide(data.choices[0].text)
   console.log({ parsed })
 

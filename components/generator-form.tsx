@@ -55,7 +55,7 @@ export default function GeneratorForm({
 
   const onSubmit = async (formData) => {
     try {
-      const response = await fetch("/api/generator", {
+      const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

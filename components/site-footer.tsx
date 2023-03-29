@@ -2,9 +2,9 @@ import Link from "next/link"
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-t-slate-200 py-6">
+    <footer className="border-t border-t-slate-200 py-6 dark:border-t-slate-700">
       <div className="container flex">
-        <div className="flex flex-col items-center space-y-4 dark:border-b-slate-700">
+        <div className="flex flex-col items-center space-y-4 dark:border-b-slate-700 ">
           <div className="">
             <p className="text-sm">
               By{" "}

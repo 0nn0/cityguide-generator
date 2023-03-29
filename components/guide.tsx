@@ -14,17 +14,21 @@ export default function Guide({ city, recommendations = [] }) {
           <li key={index} className="mb-4">
             <h2 className="font-semibold inline-block">{item.title}</h2>
             <p>{item.description}</p>
-            <Link className="text-blue-700 hover:underline" href={item.url}>
+            <Link
+              className="text-blue-700 dark:text-blue-400 hover:underline"
+              href={item.url}
+            >
               {item.url}
             </Link>
           </li>
         ))}
       </ul>
 
-      <div className="mt-8 border border-gray-200 rounded-lg p-4">
+      <div className="mt-8 border border-gray-200 rounded-lg p-4 dark:border-slate-700 text-sm">
         <p className="italic">
           Limiting results to {siteConfig.resultCount} recommendations in order
-          to keep API usage as well as the loading time to minimum.
+          to keep API usage as well as the loading time to minimum. It is just
+          an experiment.
         </p>
       </div>
     </div>
